@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:log4jdbc:mysql://${MYSQL_HOST:localhost}:3306/WebAppBoard
+    username: boardServerDev
+    password: mysql123
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+  servlet:
+    multipart:
+      location: ${user.dir}\examspring01\src\main\resources\static\public\img
+      max-file-size: 1MB #이미지 크기 지정
+      max-request-size: 5MB #default:10MB  1MB 이미지를 5개 등록할수있다.
+
+#지정설정
+img:
+  upload:
+    path: ${user.dir}\SpringBoardStudy\src\main\resources\static\public\img
+
+static:
+  path: ${user.dir}\SpringBoardStudy\src\main\resources\static
+    #이미지 수정시 주소 중복을 위해 static path를 만듦.
+
+
+mybatis:
+  mapper-locations: mapper/*Mapper.xml
+  type-aliases-package: com.example.demo.dto
+  #패키지명 미리 작성
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+
+server:
+  port: 8080

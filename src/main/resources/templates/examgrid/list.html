@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>GRID</title>
+</head>
+<div layout:fragment="content">
+    <h1>Grid 그리드</h1>
+    <p id="testText"></p>
+    <hr>
+        <div class="container text-center">
+            <form name="searchAndInsertForm" >
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="uId" id="uId" placeholder="아이디" >
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="name" id="name" placeholder="이름">
+                        </div>
+                    </div>
+                    <div class="col"></div>
+                    <div class="col">
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                            <input class="form-check-input gender" type="radio" name="gender" onclick="searchGender(event)" value="MALE" >
+                            남</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                            <input class="form-check-input gender" type="radio" name="gender" onclick="searchGender(event)"value="FEMALE">
+                            녀</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col nation">
+                        <select class="form-select" aria-label="nation"name="nation"  id="nation">
+                            <option value="" selected>국가</option>
+                            <option value="korea">korea</option>
+                            <option value="america">america</option>
+                            <option value="japan">japan</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <select class="form-select city" aria-label="city" name="city" id="city">
+                            <option value="">도시</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" name="toTime" id="floatingFrom" value="" placeholder="일정 시작" onfocus="(this.type='date')">
+                            <label for="floatingFrom">시작일</label>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-floating">
+                        <input type="text" class="form-control" name="fromTime" value="" id="floatingTo" placeholder="일정 끝" onfocus="(this.type='date')">
+                        <label  for="floatingTo">종료일</label>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div id="buttons" class="text-end">
+                    <button type="submit" class="btn btn-primary" formaction="./list.do" formmethod="post" >조회</button>
+                    <button type="button" class="btn btn-primary" onclick="addRow()"> 추가</button>
+                    <button type="button" class="btn btn-primary" onclick="register()" id="registerBtn"> 저장</button>
+                    <button type="submit" class="btn btn-primary" formaction="./excelDown.do" formmethod="get"> 엑셀다운</button>
+                    <button type="button" class="btn btn-primary" onclick="deleteSelected()" >삭제</button>
+                </div>
+                <hr>
+            </form>
+        </div>
+
+
+<!--출력페이지 --------------------------------------------------------------------------->
+        <form id="hiddenForm" name="hiddenForm" >
+        <table id="printTable" class="table">
+            <thead>
+            <tr>
+                <th scope="col">선택</th>
+                <th scope="col">아이디</th>
+                <th scope="col">이름</th>
+                <th scope="col">성별</th>
+                <th scope="col">국가</th>
+                <th scope="col">도시</th>
+            </tr>
+            </thead>
+            <!--출력리스트-->
+            <div id="ajaxLoadPage"></div>
+            <th:block th:include="/examgrid/listBoard.html"></th:block>
+
+        </table>
+        </form>
+
+<!--수정모달창 ---------------------------------------------------------------------------->
+    <div id="modifyModal" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">수정</h5>
+                </div>
+                <div class="modal-body">
+                    <form name="modifyForm"  id="modifyForm">
+                        <input type="hidden" name="eId" th:value="${eId}">
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-control"> 아이디</label>
+                            </div>
+                            <div class="input-group mb-3 col">
+                                <input type="text" class="form-control" name="uId" placeholder="아이디">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-control">이름</label>
+                            </div>
+                            <div class="input-group mb-3 col">
+                                <input type="text" class="form-control" name="name" placeholder="이름">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-control">성별</label>
+                            </div>
+                            <div class="mb-3 form-check form-check col-3">
+                                <input class="form-check-input" type="radio" name="gender" id="gender3" value="MALE" >
+                                <label class="form-check-label" for="gender3">남</label>
+                            </div>
+                            <div class=" mb-3 form-check form-check col-3">
+                                <input class="form-check-input" type="radio" name="gender" id="gender4" value="FEMALE">
+                                <label class="form-check-label" for="gender4">녀</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col input-group mb-3">
+                                <label class="form-control">국가</label>
+                            </div>
+                            <div class="col nation">
+                                <select class="form-select mb-3" aria-label="nation" name="nation" >
+                                    <option value="" >국가</option>
+                                    <option value="korea">korea</option>
+                                    <option value="america">america</option>
+                                    <option value="japan">japan</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col input-group mb-3">
+                                <label class="form-control">도시</label>
+                            </div>
+                            <div class="col mb-3">
+                                <select class="form-select city" aria-label="city" name="city" id="city1">
+                                    <option value="">도시</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="text-center my-3">
+                            <button type="button" class="btn btn-primary me-4" onclick="modifyAction()">저장</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let indexNum=0;
+        let isChk;
+        const hiddenForm=document.forms["hiddenForm"];
+        const modifyForm=document.forms["modifyForm"];
+        const modifyModal=new bootstrap.Modal(document.getElementById("modifyModal"), {});
+        const searchAndInsertForm=document.forms['searchAndInsertForm'];
+        let loadCont=document.getElementById('loadCont');
+
+
+        modifyForm.addEventListener('submit', (e)=>{e.preventDefault();});
+        const countryData = {
+            korea: ["Seoul","Incheon","Daegu","Busan"],
+            america: ["LA","NewYork"],
+            japan: ["Tokyo","Fukuoka","Osaka"]
+        };
+        nationAndCitySelect("searchAndInsertForm");
+        nationAndCitySelect("modifyForm");
+        function nationAndCitySelect(formName){
+            let nationSelect = document.forms[`${formName}`].nation;
+            let citySelect = document.forms[`${formName}`].city;
+            nationSelect.addEventListener("change", function () {
+                let selectedCountry = nationSelect.value;
+                let cityOptions = countryData[selectedCountry];
+                citySelect.innerHTML = ""; // 기존 도시 옵션을 초기화
+                if (cityOptions) {
+                    for (let i = 0; i < cityOptions.length; i++) {
+                        let cityOption = document.createElement("option");
+                        cityOption.value = cityOptions[i];
+                        cityOption.textContent = cityOptions[i];
+                        citySelect.appendChild(cityOption);
+                    }
+                }
+            });
+
+        }
+
+        //삭제
+            function deleteSelected() {
+            let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            let selectedIds = [];
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    selectedIds.push(checkboxes[i].value);
+                }
+            }
+            if (selectedIds.length > 0) {
+            if (confirm("선택한 항목을 삭제하시겠습니까?")) {
+                let form = document.createElement("form");
+                form.setAttribute("method", "post");
+                form.setAttribute("action", "./remove.do");
+
+                for (let i = 0; i < selectedIds.length; i++) {
+                    let input = document.createElement("input");
+                    input.setAttribute("type", "hidden");
+                    input.setAttribute("name", "selectedIds");
+                    input.setAttribute("value", selectedIds[i]);
+                    form.appendChild(input);
+                }
+                document.body.appendChild(form);
+                form.submit();
+            }
+            } else {
+                alert("삭제할 항목을 선택해주세요.");
+            }
+        }
+
+    //수정
+        function loadModify(eId) {
+            let url = `/examgrid/${eId}/detail.do`;
+            ;
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function(json) {
+                    for (let key in json) {
+                        $("#modifyForm").find("input,select,radio").each(function() {
+                            key = $(this).attr("name");
+                            if (key === "gender") {
+                                if ($(this).val() === json[key]) {
+                                    $(this).prop("checked", true); // radio 버튼 체크 속성 주기
+                                }
+                            } else if (key === "nation" || key === "city") {
+                                $(this).find("option").each(function() {
+                                    if ($(this).val() === json[key]) {
+                                        $(this).prop("selected", true); // option 선택 상태 설정
+                                    }
+                                });
+                            } else {
+                                $(this).val(json[key]);
+                            }
+                        });
+                    }
+                    modifyModal.show();
+                },
+                error: function() {
+                    // Handle error here
+                }
+            });
+        }
+
+        async function modifyAction() {
+            isChk=await formCheck(event,"modifyForm");
+            console.log(isChk)
+            if(isChk===true){
+                modifyModal.hide();
+                //hiddenForm.submit();
+                let url="/examgrid/handler.do";
+                const data=new FormData(modifyForm);
+                const resp=await fetch(url,{method:"PUT", body:data});
+                if(resp.status===200){
+                    const json=await resp.json();
+                    if(json.handler>0){//"handler":"1"
+                        await loadPageAjax()
+                    }
+                }else{
+                    alert("수정 실패");
+                }
+            }
+        }
+
+        async function register() {
+            if (indexNum === 0) {
+                searchAndInsertForm.setAttribute("action", "./register.do")
+                searchAndInsertForm.setAttribute("method", "POST")
+                isChk = await formCheck(event, "searchAndInsertForm");
+                if (isChk === true) {
+                    await searchAndInsertForm.submit();
+                }
+            }
+            if (indexNum > 0) {
+                await saveData();
+            }
+            await loadPageAjax();
+        }
+
+
+            function addRow() {
+                indexNum += 1
+                //아이디,이름,성별,국가,도시
+                let newRow = loadCont.insertRow(0);
+                let checkCell = newRow.insertCell(0);
+                let uIdCell = newRow.insertCell(1);
+                let nameCell = newRow.insertCell(2);
+                let genderCell = newRow.insertCell(3);
+                let nationCell = newRow.insertCell(4);
+                let cityCell = newRow.insertCell(5);
+
+                let checkInput = document.createElement("input")
+                checkInput.type = "checkbox"
+                checkCell.appendChild(checkInput);
+                let uIdInput = document.createElement("input")
+                uIdInput.type = "text"
+                uIdInput.classList = "form-control"
+                uIdInput.name = "uId"
+                uIdCell.appendChild(uIdInput);
+
+                let userNameInput = document.createElement("input")
+                userNameInput.type = "text"
+                userNameInput.classList = "form-control"
+                userNameInput.name = "name"
+                nameCell.appendChild(userNameInput);
+
+                let genderCont = document.createElement("div");
+                genderCont.classList="row";
+                let genderMaleCont = document.createElement("div");
+                genderMaleCont.classList="form-check col";
+                let genderFemaleCont = document.createElement("div");
+                genderFemaleCont.classList="form-check col";
+                let maleRadio = document.createElement("input");
+                maleRadio.type = "radio";
+                maleRadio.name = "gender";
+                maleRadio.value = "male";
+                maleRadio.checked = true;
+                maleRadio.classList ="form-check-input";
+                let maleLabel = document.createElement("label")
+                maleLabel.textContent = "남"
+                maleLabel.classList = "form-check-label"
+
+                let femaleRadio = document.createElement("input");
+                femaleRadio.type = "radio";
+                femaleRadio.name = "gender";
+                femaleRadio.value = "female";
+                femaleRadio.classList ="form-check-input"
+                let femaleLabel = document.createElement("label")
+                femaleLabel.textContent = "녀"
+                femaleLabel.classList = "form-check-label"
+
+                genderMaleCont.appendChild(maleRadio);
+                genderMaleCont.appendChild(maleLabel);
+                genderFemaleCont.appendChild(femaleRadio);
+                genderFemaleCont.appendChild(femaleLabel);
+                genderCont.appendChild(genderMaleCont);
+                genderCont.appendChild(genderFemaleCont);
+                genderCell.appendChild(genderCont);
+
+                let nationSelect = document.createElement("select");
+                nationSelect.name = "nation";
+                nationSelect.classList ="form-select";
+                nationSelect.setAttribute("aria-label","nation");
+                nationSelect.addEventListener("change", function () {
+                    let selectedCountry = nationSelect.value;
+                    let cityOptions = countryData[selectedCountry];
+
+                    citySelect.innerHTML = ""; // 기존 도시 옵션을 초기화합니다.
+
+                    if (cityOptions) {
+                        for (let i = 0; i < cityOptions.length; i++) {
+                            let cityOption = document.createElement("option");
+                            cityOption.value = cityOptions[i];
+                            cityOption.textContent = cityOptions[i];
+                            citySelect.appendChild(cityOption);
+                        }
+                    }
+                });
+
+                let citySelect = document.createElement("select");
+                citySelect.name = "city";
+                citySelect.classList="form-select city";
+                citySelect.setAttribute("aria-label","city");
+
+                for (let country in countryData) {
+                    let countryOption = document.createElement("option");
+                    countryOption.value = country;
+                    countryOption.textContent = country;
+                    nationSelect.appendChild(countryOption);
+                }
+                nationCell.appendChild(nationSelect);
+                cityCell.appendChild(citySelect);
+
+            }
+
+            async function saveData() {
+                isChk = await formCheck(event, "hiddenForm");
+                if (isChk === true) {
+                    let url = `/examgrid/handler.do`
+                    const data = new FormData(hiddenForm);
+                    const resp = await fetch(url, {method: "POST", body: data});
+                    if (resp.status === 200) {
+                        const json = await resp.json();
+                        if (json.handler > 0) {
+                            //수정성공메세지
+                        }
+                    }
+
+                }
+            }
+
+
+
+            //유효성검사 (입력폼)
+            async function idCheck(uId) {
+                const resp = await fetch(`/examgrid/${uId}/checkId.do`);
+                const result = await resp.json();
+                return result;
+
+            }
+
+            async function formCheck(e, formName) {
+                e.preventDefault();
+                let form = document.forms[`${formName}`];
+                //console.log(form);//확인
+                let uId = form.uId.value;
+                let name = form.name.value;
+                let genderChk = false;
+                for (let i = 0; i < form.gender.length; i++) {
+                    if (form.gender[i].checked === true) {//성별의 i가 체크되면, true
+                        genderChk = true;//트루이면 체크된것.
+                    }
+                }
+                let nation = form.nation.value;
+                let city = form.city.value;
+
+                let idCheckResult = await idCheck(uId);
+
+                //console.log("결과값출력" + uId + name + genderChk + nation + city)//확인
+                if (idCheckResult > 0) {
+                    alert("이미 존재하는 아이디입니다.")
+                    isChk = false;
+                    return isChk;
+
+                } else {
+                    if (uId === "" || name === "" || genderChk === false || nation === "" || city === "") {
+                        alert("값을 다 기입하세요.");
+                        isChk = false;
+                        return isChk;
+                    } else {
+                        isChk = true
+                        return isChk;
+                    }
+                }
+        }
+        //남녀 검색
+        async function searchGender(event){
+            await loadGenderPage(event.target.value)
+        }
+
+        async function loadGenderPage(gender) {
+            let url = `/examgrid/${gender}/listBoard.do`
+            const resp = await fetch(url);
+            if (resp.status === 200) {
+                let printText = await resp.text();
+                loadCont.innerHTML = printText; // ajax 로 리스트 새로 불러오기
+            }
+        }
+        async function loadPageAjax() {
+            try {
+                let url = "/examgrid/listBoard.do";
+                const resp = await fetch(url, { method: "GET" });
+
+                if (resp.status === 200) {
+                    const data = await resp.json();
+                    let ajaxTD = "";
+
+                    data.forEach((item) => {
+                        ajaxTD += "<tr ondblclick='loadModify("+item.eId+")'><td><input type='checkbox' value='" + item.eId + "'></td>";
+                        ajaxTD += "<td class='col'>" + item.uId + "</td>";
+                        ajaxTD += "<td class='col'>" + item.name + "</td>";
+                        ajaxTD += "<td class='col'>" + item.gender + "</td>";
+                        ajaxTD += "<td class='col'>" + item.nation + "</td>";
+                        ajaxTD += "<td class='col'>" + item.city + "</td></tr>";
+                    });
+
+                    $("#loadCont").html(ajaxTD); // jQuery를 사용하여 데이터를 삽입
+                } else {
+                    console.log("Error:", resp.status);
+                }
+            } catch (error) {
+                console.log("Error:", error);
+            }
+        }
+    </script>
+</div>
+
+
+</html>

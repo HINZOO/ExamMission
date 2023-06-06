@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.ExamGridMapper">
+    <resultMap id="ExamMap" type="ExamGridDto">
+        <id column="e_id" property="eId"/>
+        <result column="u_id" property="uId"/>
+        <result column="name" property="name"/>
+        <result column="nation" property="nation"/>
+        <result column="city" property="city"/>
+        <result column="post_time" property="postTime"/>
+        <result column="gender" property="gender"/>
+        <result column="toTime" property="toTime"/>
+        <result column="fromTime" property="fromTime"/>
+    </resultMap>
+    <insert id="insertOne" useGeneratedKeys="true" keyProperty="eId" parameterType="ExamGridDto">
+        INSERT INTO exam_grid (u_id,name, nation, city, gender)VALUES(#{uId},#{name},#{nation},#{city},#{gender})
+    </insert>
+    <update id="updateOne" parameterType="ExamGridDto">
+        UPDATE exam_grid SET u_id=#{uId},name=#{name},nation=#{nation},city=#{city},gender=#{gender} WHERE e_id=#{eId}
+    </update>
+    <delete id="deleteOne">
+        DELETE FROM exam_grid WHERE e_id=#{eId}
+    </delete>
+    <select id="findAll" resultMap="ExamMap">
+        SELECT * FROM exam_grid
+        WHERE 1=1
+        <if test="name != null and !name.isEmpty()">
+            AND name LIKE CONCAT('%',#{name},'%')
+        </if>
+        <if test="uId != null and !uId.isEmpty()">
+            AND u_id LIKE CONCAT('%',#{uId},'%')
+        </if>
+        <if test="nation != null and !nation.isEmpty()">
+            AND nation=#{nation}
+        </if>
+        <if test="city != null and !city.isEmpty()">
+            AND city=#{city}
+        </if>
+        <if test="gender != null and !gender.isEmpty()">
+            AND gender=#{gender}
+        </if>
+        <if test="toTime != null and !toTime.isEmpty()">
+            AND (post_time>=#{toTime} AND #{fromTime}>=post_time)
+        </if>
+        ORDER BY e_id DESC;
+    </select>
+    <select id="findByEId"  resultMap="ExamMap">
+        SELECT * FROM exam_grid WHERE e_id=#{eId}
+    </select>
+    <select id="findByUId" resultMap="ExamMap">
+        SELECT * FROM exam_grid WHERE u_id=#{uId}
+    </select>
+</mapper>
