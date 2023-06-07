@@ -1,0 +1,77 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>GRID</title>
+    <style>
+    .dropdown1 {
+	  position: relative;
+	  left: 50px;
+	  top: 50px;
+	}
+    </style>
+    
+</head>
+<div layout:fragment="content" id="bodyCont">
+	
+  <div class="dropdown1">
+  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span class="dropdown-text"> Select Options</span>
+  <span class="caret"></span></button>
+  <ul class="dropdown-menu">
+    <li><a href="#"><label><input type="checkbox" class="selectall" /><span class="select-text"> Select</span> All</label></a></li>
+    <li class="divider"></li>
+    <li><a class="option-link" href="#"><label><input name='options[]' type="checkbox" class="option justone" value='Option 1 '/> Option 1</label></a></li>
+    <li><a href="#"><label><input name='options[]' type="checkbox" class="option justone" value='Option 2 '/> Option 2</label></a></li>
+    <li><a href="#"><label><input name='options[]' type="checkbox" class="option justone" value='Option 3 '/> Option 3</label></a></li>
+  </ul>
+</div>
+
+<select name="ingredients[]" id="ingredients" multiple="multiple">
+    <option value="cheese">Cheese</option>
+    <option value="tomatoes">Tomatoes</option>
+    <option value="mozarella">Mozzarella</option>
+    <option value="mushrooms">Mushrooms</option>
+    <option value="pepperoni">Pepperoni</option>
+    <option value="onions">Onions</option>
+</select>
+
+<script>
+	$('bodyCont').on("click", ".dropdown-menu", function (e) {
+	    $(this).parent().is(".open") && e.stopPropagation();
+	});
+	
+	$('.selectall').click(function() {
+	    if ($(this).is(':checked')) {
+	        $('.option').prop('checked', true);
+	        var total = $('input[name="options[]"]:checked').length;
+	        $(".dropdown-text").html('(' + total + ') Selected');
+	        $(".select-text").html(' Deselect');
+	    } else {
+	        $('.option').prop('checked', false);
+	        $(".dropdown-text").html('(0) Selected');
+	        $(".select-text").html(' Select');
+	    }
+	});
+	
+	$("input[type='checkbox'].justone").change(function(){
+	    var a = $("input[type='checkbox'].justone");
+	    if(a.length == a.filter(":checked").length){
+	        $('.selectall').prop('checked', true);
+	        $(".select-text").html(' Deselect');
+	    }
+	    else {
+	        $('.selectall').prop('checked', false);
+	        $(".select-text").html(' Select');
+	    }
+	  var total = $('input[name="options[]"]:checked').length;
+	  $(".dropdown-text").html('(' + total + ') Selected');
+	});
+	
+	$(document).ready(function() {
+        $('#ingredients').multiselect();
+    });
+</script>
+</div>
+</html>

@@ -42,7 +42,7 @@
                     <div class="col nation">
                         <select class="form-select" aria-label="nation"name="nation"  id="nation">
                             <option value="" selected>국가</option>
-                            <option value="korea">korea</option>
+                            <option value="korea"><input type="checkbox" name="nationOp" value="ko">korea</input></option>
                             <option value="america">america</option>
                             <option value="japan">japan</option>
                         </select>
@@ -156,7 +156,7 @@
                                 <label class="form-control">도시</label>
                             </div>
                             <div class="col mb-3">
-                                <select class="form-select city" aria-label="city" name="city" id="city1">
+                                <select class="form-select city" aria-label="city" name="city">
                                     <option value="">도시</option>
                                 </select>
                             </div>
@@ -180,7 +180,7 @@
         const searchAndInsertForm=document.forms['searchAndInsertForm'];
         let loadCont=document.getElementById('loadCont');
 
-
+		//콤보박스
         modifyForm.addEventListener('submit', (e)=>{e.preventDefault();});
         const countryData = {
             korea: ["Seoul","Incheon","Daegu","Busan"],
