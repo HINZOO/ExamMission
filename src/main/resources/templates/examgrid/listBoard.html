@@ -1,9 +1,9 @@
-<tbody id="loadCont">
-<th:block  th:each="e:${exam}">
-  <tr th:ondblclick="loadModify([[${e.eId}]])" th:with="eId=${e.eId}">
-    <th scope="row">
-      <input type="checkbox" th:value="${e.getEId()}">
-    </th>
+<tbody id="loadCont" class="w-100 h-75 overflow-scroll">
+<th:block th:each="e:${exam}">
+  <tr th:ondblclick="loadModify([[${e.eId}]])" th:with="eId=${e.eId}" th:style="${(e.getGender()=='MALE')?'background:#FBFFDC':'background:#E6FFFD'}">
+    <td scope="row" >
+      <input type="checkbox" name="indexNum" th:value="${e.getEId()}">
+    </td>
     <td class="col">
       <span th:text="${e.getUId()}"></span>
     </td>

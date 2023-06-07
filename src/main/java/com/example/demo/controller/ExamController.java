@@ -73,8 +73,18 @@ public class ExamController {
 
     @PostMapping("/register.do")
     public String registerAction(@ModelAttribute ExamGridDto examGridDto,
+    							@RequestParam("city") List<String> citys,
                                  RedirectAttributes redirectAttributes){
+    	System.out.println("등록값"+examGridDto);
         int insert;
+        String cityValue="";
+        for(String city:citys) {
+        	cityValue+=city+",";	
+        }
+        if (!cityValue.isEmpty()) {
+            cityValue = cityValue.substring(0, cityValue.length() - 1);
+        }//마지막 쉼표 제외
+        examGridDto.setCity(cityValue);
         insert=examGridService.register(examGridDto);
         return "redirect:/examgrid/list.do";
     }

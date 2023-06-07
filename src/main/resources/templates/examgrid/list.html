@@ -6,13 +6,78 @@
 <head>
     <meta charset="UTF-8">
     <title>GRID</title>
+           <style>  
+      .selectBox {
+        position: relative;
+      }
+      
+      .selectBox select {
+        width: 100%;
+      }
+      
+      .overSelect {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      	margin:0;
+	 	padding:1px;
+	 	overflow:scroll;
+      }
+      
+      #checkBoxes {
+        display: none;
+        border: 1px solid;
+        position: absolute;
+        z-index: 1;
+      }
+      
+      #checkBoxes label {
+        display: block;
+      }
+      
+      .content {
+        position: relative;
+      }
+      
+      .content .multipleSelection {
+        display: inline-block;
+      }
+      
+      .content .multipleSelection #checkBoxes {
+        top: 100%;
+        margin-top: 5px;
+      }
+      
+      .tableWrapper {
+      	margin:0 auto;
+    width: 800px;
+    height: 350px;
+    overflow: auto;
+}
+
+#ListTable {
+
+    width: 800px;
+    border: 0px;
+    border-collapse: collapse;
+}
+
+#ListTable th {
+    position: sticky;
+    top: 0px;
+    background-color:white;
+}
+
+    </style>
 </head>
 <div layout:fragment="content">
     <h1>Grid 그리드</h1>
     <p id="testText"></p>
     <hr>
         <div class="container text-center">
-            <form name="searchAndInsertForm" >
+            <form name="searchAndInsertForm" id="searchAndInsertForm">
                 <div class="row">
                     <div class="col">
                         <div class="input-group mb-3">
@@ -40,17 +105,27 @@
                 </div>
                 <div class="row">
                     <div class="col nation">
-                        <select class="form-select" aria-label="nation"name="nation"  id="nation">
+                        <select class="form-select" aria-label="nation" name="nation"  id="nation" onchange="nationAndCitySelect(this)">
                             <option value="" selected>국가</option>
-                            <option value="korea"><input type="checkbox" name="nationOp" value="ko">korea</input></option>
+                            <option value="korea">korea</option>
                             <option value="america">america</option>
                             <option value="japan">japan</option>
                         </select>
                     </div>
                     <div class="col">
-                        <select class="form-select city" aria-label="city" name="city" id="city">
-                            <option value="">도시</option>
-                        </select>
+                       <div class="multipleSelection">
+					        <div class="selectBox" onclick="showCheckBox(this)">
+					            <select class="form-select chkValue" name="chkValue" >		
+					                     <option value="1" selected>전체</option>		             
+					            </select>
+					            <div class="overSelect text-start" id="overSelect">
+					             	<span class="selectedValues"></span><!-- 추가된 도시 옵션을 보여지는 위치  -->
+					            </div>
+					            <div id="checkBoxes" name="checkBoxes" class="form-control text-start cityList">
+					                <!-- 도시 옵션을 추가할 위치 -->
+					            </div>
+					        </div>
+						</div>                     
                     </div>
                     <div class="col">
                         <div class="form-floating">
@@ -80,9 +155,10 @@
 
 
 <!--출력페이지 --------------------------------------------------------------------------->
+        <div class="tableWrapper">
         <form id="hiddenForm" name="hiddenForm" >
-        <table id="printTable" class="table">
-            <thead>
+		    <table id="ListTable" class="table">
+		        <thead>
             <tr>
                 <th scope="col">선택</th>
                 <th scope="col">아이디</th>
@@ -96,8 +172,12 @@
             <div id="ajaxLoadPage"></div>
             <th:block th:include="/examgrid/listBoard.html"></th:block>
 
-        </table>
+		    </table>
         </form>
+		 </div>
+        <table id="printTable" class="table">
+           
+        </table>
 
 <!--수정모달창 ---------------------------------------------------------------------------->
     <div id="modifyModal" class="modal" tabindex="-1">
@@ -143,7 +223,7 @@
                                 <label class="form-control">국가</label>
                             </div>
                             <div class="col nation">
-                                <select class="form-select mb-3" aria-label="nation" name="nation" >
+                                <select class="form-select mb-3" aria-label="nation" name="nation"  onchange="nationAndCitySelect(this)">
                                     <option value="" >국가</option>
                                     <option value="korea">korea</option>
                                     <option value="america">america</option>
@@ -152,14 +232,22 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col input-group mb-3">
+                         	<div class="col input-group mb-3">
                                 <label class="form-control">도시</label>
                             </div>
-                            <div class="col mb-3">
-                                <select class="form-select city" aria-label="city" name="city">
-                                    <option value="">도시</option>
-                                </select>
-                            </div>
+                 		   <div class="multipleSelection col">
+					        <div class="selectBox" onclick="showCheckBox(this)">
+					            <select class="form-select chkValue" name="chkValue" >	
+					   	             
+					            </select>
+					            <div class="overSelect text-start" id="overSelect">
+					             	<span class="selectedValues"></span><!-- 추가된 도시 옵션을 보여지는 위치  -->
+					            </div>
+					            <div id="checkBoxes" name="checkBoxes" class="form-control text-start cityList">
+					                <!-- 도시 옵션을 추가할 위치 -->
+					            </div>
+					        </div>
+						</div>                
                         </div>
                         <div class="text-center my-3">
                             <button type="button" class="btn btn-primary me-4" onclick="modifyAction()">저장</button>
@@ -172,7 +260,7 @@
     </div>
 
     <script th:inline="javascript">
-        let indexNum=0;
+        let indexNum=0;//0기본 //1row //2수정
         let isChk;
         const hiddenForm=document.forms["hiddenForm"];
         const modifyForm=document.forms["modifyForm"];
@@ -187,34 +275,65 @@
             america: ["LA","NewYork"],
             japan: ["Tokyo","Fukuoka","Osaka"]
         };
-        nationAndCitySelect("searchAndInsertForm");
-        nationAndCitySelect("modifyForm");
-        function nationAndCitySelect(formName){
-            let nationSelect = document.forms[`${formName}`].nation;
-            let citySelect = document.forms[`${formName}`].city;
-            nationSelect.addEventListener("change", function () {
-                let selectedCountry = nationSelect.value;
-                let cityOptions = countryData[selectedCountry];
-                citySelect.innerHTML = ""; // 기존 도시 옵션을 초기화
-                if (cityOptions) {
-                    for (let i = 0; i < cityOptions.length; i++) {
-                        let cityOption = document.createElement("option");
-                        cityOption.value = cityOptions[i];
-                        cityOption.textContent = cityOptions[i];
-                        citySelect.appendChild(cityOption);
-                    }
-                }
-            });
+        
+        	//  nationAndCitySelect("searchAndInsertForm");        	
+       		  //showCheckBox("searchAndInsertForm");   
+   
+           // nationAndCitySelect("modifyForm");
+        	//showCheckBox("modifyForm");
+    
 
+        function nationAndCitySelect(selectElement) {
+        	let formElement = selectElement.closest('form');
+        	let nationSelect = formElement.querySelector('select[name="nation"]');
+            //let nationSelect =formElement.querySelector('.form-select[name="nation"]');
+            let chkValueInput=formElement.querySelector('.chkValue');
+            let chkValue="";
+           	let citySelect =formElement.querySelector('.cityList');
+			console.log("콤보박스"+citySelect.innerHTML)
+            
+           
+             let selectedCountry = nationSelect.value;
+             let cityOptions = countryData[selectedCountry];
+             citySelect.innerHTML = " "; // 기존 도시 옵션을 초기화
+           
+             if (cityOptions) {
+             	let cityOption = document.createElement("label");
+                 let checkbox = document.createElement("input");
+                 checkbox.type = "checkbox";
+                 checkbox.classList = "allCity";
+                 checkbox.setAttribute("onchange","checkAll(this)");
+                 cityOption.appendChild(checkbox);
+                 cityOption.appendChild(document.createTextNode("전체"));
+                 citySelect.appendChild(cityOption);
+                 for (let i = 0; i < cityOptions.length; i++) {
+                     let cityOption = document.createElement("label");
+                     let checkbox = document.createElement("input");
+                     checkbox.type = "checkbox";
+                     checkbox.name = "city";
+                     checkbox.value = cityOptions[i];
+                     chkValue+=checkbox.value+" ";
+                     console.log(chkValue);
+                     cityOption.appendChild(checkbox);
+                     cityOption.appendChild(document.createTextNode(cityOptions[i]));
+                     citySelect.appendChild(cityOption);
+                     
+                 }
+                 chkValueInput.value=chkValue;
+                 chkValue="";
+             } 
+        
         }
+        
 
         //삭제
             function deleteSelected() {
-            let checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            let selectedIds = [];
-            for (let i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].checked) {
-                    selectedIds.push(checkboxes[i].value);
+            	let indexNums = hiddenForm.querySelectorAll('input[name="indexNum"]:checked');
+            	console.log(indexNums);
+            	let selectedIds = [];
+            for (let i = 0; i < indexNums.length; i++) {
+                if (indexNums[i].checked) {
+                    selectedIds.push(indexNums[i].value);
                 }
             }
             if (selectedIds.length > 0) {
@@ -241,11 +360,52 @@
     //수정
         function loadModify(eId) {
             let url = `/examgrid/${eId}/detail.do`;
-            ;
             $.ajax({
                 url: url,
                 method: 'GET',
                 success: function(json) {
+                	let formElement = document.forms['modifyForm'];
+                	let nationSelect = formElement.querySelector('select[name="nation"]');
+                	let chkValueInput = formElement.querySelector('.chkValue');
+                	let citySelect = formElement.querySelector('.cityList');
+
+                	for (let key in json) {
+                	    let element = formElement.querySelector(`[name="${key}"]`);
+                	    if (element) {
+                	        if (key === "gender") {
+                	            if (element.value === json[key]) {
+                	                element.checked = true;
+                	            }
+                	        } else if (key === "nation") {
+                	            let option = element.querySelector(`option[value="${json[key]}"]`);
+                	            if (option) {
+                	                option.selected = true;
+                	            }
+                	        } else if (key === "city") {
+                	        	  let values = json[key];
+                	        	  let valArr = values.split(",");
+                	        	  let cityCheckboxes = formElement.querySelectorAll('.cityList input[type="checkbox"]');
+
+                	        	  for (let i = 0; i < cityCheckboxes.length; i++) {
+                	        	    let checkbox = cityCheckboxes[i];
+                	        	    let checkboxValue = checkbox.value;                	        	 
+                	        	    if (valArr.includes(checkboxValue)) {
+                	        	     	checkbox.setAttribute('checked',''); // checkbox 요소 체크 속성 설정
+                	        	    	console.log(checkbox);
+                	        	    }
+                	        	    chkValueInput.appendChild(checkbox);
+                	        	  }
+                	        } else {
+                	            element.value = json[key];
+                	        }
+                	    }
+                	    (function() {
+        	            	nationAndCitySelect(nationSelect);
+        	            	})();
+                		}
+                 
+                    modifyModal.show();
+     /*            	console.log(json);
                     for (let key in json) {
                         $("#modifyForm").find("input,select,radio").each(function() {
                             key = $(this).attr("name");
@@ -253,18 +413,32 @@
                                 if ($(this).val() === json[key]) {
                                     $(this).prop("checked", true); // radio 버튼 체크 속성 주기
                                 }
-                            } else if (key === "nation" || key === "city") {
+                            } else if (key === "nation") {
                                 $(this).find("option").each(function() {
                                     if ($(this).val() === json[key]) {
-                                        $(this).prop("selected", true); // option 선택 상태 설정
+                                        $(this).prop("selected", true); // option 선택 상태 설정                                     
                                     }
-                                });
-                            } else {
+                                });	                         
+                            }else if(key==="city"){
+                            	let values = json[key];
+                            	let valArr= new Array();
+                            	valArr=values.split(",");
+                            	for(let i=0; i<valArr.length;i++){
+                            		console.log(valArr); 
+                                    if ($(this).val() === valArr[i]) {
+                                       let$(this).prop("checked", true); // checkbox 요소 체크 속성 주기
+                                    }
+                            	}
+                                
+                                        	
+                            }else {
                                 $(this).val(json[key]);
                             }
+                            
                         });
+                        
                     }
-                    modifyModal.show();
+                    modifyModal.show(); */
                 },
                 error: function() {
                     // Handle error here
@@ -277,7 +451,6 @@
             console.log(isChk)
             if(isChk===true){
                 modifyModal.hide();
-                //hiddenForm.submit();
                 let url="/examgrid/handler.do";
                 const data=new FormData(modifyForm);
                 const resp=await fetch(url,{method:"PUT", body:data});
@@ -294,12 +467,7 @@
 
         async function register() {
             if (indexNum === 0) {
-                searchAndInsertForm.setAttribute("action", "./register.do")
-                searchAndInsertForm.setAttribute("method", "POST")
-                isChk = await formCheck(event, "searchAndInsertForm");
-                if (isChk === true) {
-                    await searchAndInsertForm.submit();
-                }
+            	 await insertForm();             
             }
             if (indexNum > 0) {
                 await saveData();
@@ -366,40 +534,54 @@
                 genderCont.appendChild(genderMaleCont);
                 genderCont.appendChild(genderFemaleCont);
                 genderCell.appendChild(genderCont);
+				
+                //
 
                 let nationSelect = document.createElement("select");
                 nationSelect.name = "nation";
                 nationSelect.classList ="form-select";
                 nationSelect.setAttribute("aria-label","nation");
-                nationSelect.addEventListener("change", function () {
-                    let selectedCountry = nationSelect.value;
-                    let cityOptions = countryData[selectedCountry];
-
-                    citySelect.innerHTML = ""; // 기존 도시 옵션을 초기화합니다.
-
-                    if (cityOptions) {
-                        for (let i = 0; i < cityOptions.length; i++) {
-                            let cityOption = document.createElement("option");
-                            cityOption.value = cityOptions[i];
-                            cityOption.textContent = cityOptions[i];
-                            citySelect.appendChild(cityOption);
-                        }
-                    }
-                });
-
-                let citySelect = document.createElement("select");
-                citySelect.name = "city";
-                citySelect.classList="form-select city";
-                citySelect.setAttribute("aria-label","city");
-
                 for (let country in countryData) {
                     let countryOption = document.createElement("option");
                     countryOption.value = country;
                     countryOption.textContent = country;
                     nationSelect.appendChild(countryOption);
                 }
+                nationSelect.setAttribute("onchange","nationAndCitySelect(this)")
                 nationCell.appendChild(nationSelect);
-                cityCell.appendChild(citySelect);
+        
+                // multipleSelection 요소 생성
+                let multipleSelection = document.createElement("div");
+                multipleSelection.classList.add("multipleSelection");
+                
+                let selectBox = document.createElement("div");
+                selectBox.classList.add("selectBox");
+                selectBox.setAttribute("onclick","showCheckBox(this)")
+         		multipleSelection.appendChild(selectBox);
+
+                // 체크박스를 위한 select 요소 생성
+                let select = document.createElement("select");
+                select.classList.add("form-select", "chkValue");
+                select.name = "chkValue";
+                selectBox.appendChild(select);        
+
+                // overSelect 요소 생성
+                let overSelect = document.createElement("div");
+                overSelect.classList.add("overSelect", "text-start");
+                let selectedValues = document.createElement("span");
+                selectedValues.classList.add("selectedValues");
+                overSelect.appendChild(selectedValues);
+                selectBox.appendChild(overSelect);
+
+                // checkBoxes 요소 생성
+                let checkBoxes = document.createElement("div");
+                checkBoxes.id = "checkBoxes";
+                checkBoxes.name = "checkBoxes";
+                checkBoxes.classList.add("form-control", "text-start", "cityList");
+                selectBox.appendChild(checkBoxes);
+
+                cityCell.appendChild( multipleSelection);
+
 
             }
 
@@ -442,23 +624,26 @@
                     }
                 }
                 let nation = form.nation.value;
-                let city = form.city.value;
+                let city = [];
+                form.querySelectorAll('input[name="city"]:checked').forEach((checkbox) => {
+                  city.push(checkbox.value);
+                });
 
                 let idCheckResult = await idCheck(uId);
 
-                //console.log("결과값출력" + uId + name + genderChk + nation + city)//확인
+                console.log("결과값출력" + uId + name + genderChk + nation + city)//확인
                 if (idCheckResult > 0) {
                     alert("이미 존재하는 아이디입니다.")
                     isChk = false;
                     return isChk;
 
                 } else {
-                    if (uId === "" || name === "" || genderChk === false || nation === "" || city === "") {
+                    if (uId === "" || name === "" || genderChk === false || nation === "" || city.length === 0) {
                         alert("값을 다 기입하세요.");
                         isChk = false;
                         return isChk;
                     } else {
-                        isChk = true
+                        isChk = true;
                         return isChk;
                     }
                 }
@@ -476,6 +661,7 @@
                 loadCont.innerHTML = printText; // ajax 로 리스트 새로 불러오기
             }
         }
+        
         async function loadPageAjax() {
             try {
                 let url = "/examgrid/listBoard.do";
@@ -486,7 +672,8 @@
                     let ajaxTD = "";
 
                     data.forEach((item) => {
-                        ajaxTD += "<tr ondblclick='loadModify("+item.eId+")'><td><input type='checkbox' value='" + item.eId + "'></td>";
+                    	ajaxTD += `<tr ondblclick="loadModify(${item.eId})" class="w-100 h-75 overflow-scroll" style="${item.gender === 'MALE' ? 'background:#FBFFDC' : 'background:#E6FFFD'}">`;
+                        ajaxTD += "<td><input type='checkbox' value='" + item.eId + "'></td>";
                         ajaxTD += "<td class='col'>" + item.uId + "</td>";
                         ajaxTD += "<td class='col'>" + item.name + "</td>";
                         ajaxTD += "<td class='col'>" + item.gender + "</td>";
@@ -502,6 +689,71 @@
                 console.log("Error:", error);
             }
         }
+        
+        
+        
+        //도시 select창 보여지게 처리.
+		let show=true;
+        function showCheckBox(selectElement){
+           	let formElement = selectElement.closest('form');
+        	let selectBox= formElement.querySelector(`.selectBox`);
+      		let cityList= formElement.querySelector('.cityList');
+        	let selectedValuesElement= formElement.querySelector(` .selectedValues`);  
+        		  if(show) {
+        			  	selectedValuesElement.textContent =" "
+ 					 	cityList.style.display = "block";
+ 				        show = false;
+ 				    } else {
+  				        selectedValuesElement.textContent =" "
+ 				    	cityList.style.display = "none";
+ 				        show = true;		
+  				    	let selectedCheckboxes = document.querySelectorAll('input[name="city"]:checked');
+  			    	    let selectedValues = Array.from(selectedCheckboxes).map(function(checkbox) {
+  			    	    	console.log('여기다 넣을까?'+checkbox.innerText)
+  			    	    	return checkbox.value;
+  			    	  	});
+  			    	  	selectedValuesElement.textContent = selectedValues.join(', ');
+  			    	 	
+ 				    }
+ 	
+        }
+
+	
+	    
+		//저장
+	    async function insertForm() {
+	    	isChk = await formCheck(event, "searchAndInsertForm")
+	    	console.log(isChk);
+	    	if(isChk===true){
+	    		 let formData = $('form[name="searchAndInsertForm"]').serializeArray(); // 기존 폼 데이터 가져오기
+	    		 $.ajax({
+		    	    url: "./register.do",
+		    	    method: 'POST',
+		    	    data: formData,
+		    	    success: function(response) {
+		    	    	 loadPageAjax();
+		    	    },
+		    	    error: function(xhr, status, error) {
+		    	      // 서버로부터 응답을 받지 못했거나 오류가 발생했을 때 실행되는 코드입니다.
+		    	     alert("실패")
+		    	      // 오류 처리를 수행할 수 있습니다.
+		    	    }
+		    	  });
+	    	}
+	    	 
+   	}
+    function checkAll(selectElement) {
+    	let formElement = selectElement.closest('form');
+    	let checkboxes = document.getElementsByName('city'); // 체크박스들을 선택합니다.
+    	let checkAllCheckbox = formElement.querySelector('.allCity'); // 전체 선택/해제 체크박스를 선택합니다.
+    	  for (var i = 0; i < checkboxes.length; i++) {
+    	    checkboxes[i].checked = checkAllCheckbox.checked; // 전체 선택/해제 체크박스의 상태에 따라 체크박스들을 선택 또는 해제합니다.
+    	  }
+	}
+    
+
+
+
     </script>
 </div>
 

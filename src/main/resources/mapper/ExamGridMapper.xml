@@ -34,7 +34,7 @@
             AND nation=#{nation}
         </if>
         <if test="city != null and !city.isEmpty()">
-            AND city=#{city}
+            AND city LIKE CONCAT('%',#{city},'%')
         </if>
         <if test="gender != null and !gender.isEmpty()">
             AND gender=#{gender}
