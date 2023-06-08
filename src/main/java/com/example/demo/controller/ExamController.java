@@ -1,7 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ExamGridDto;
+import com.example.demo.dto.PageDto;
 import com.example.demo.service.ExamGridService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,12 +32,23 @@ public class ExamController {
 
     @GetMapping("/list.do")
     public String list(Model model,
-                       @ModelAttribute ExamGridDto examGridDto){
+                       @ModelAttribute ExamGridDto examGridDto,
+                       @RequestParam(required=false,defaultValue="1") Integer pageNum){
         List<ExamGridDto> examGridDtos;
         examGridDtos=examGridService.list(examGridDto);
+        
+        PageInfo<ExamGridDto> pageGrids=new PageInfo<>(examGridDtos);
         model.addAttribute("exam",examGridDtos);
+        model.addAttribute("page",pageGrids);
         return "examgrid/list";
     }
+	/*
+	 * @GetMapping("/list.do") public String list(Model model,
+	 * 
+	 * @ModelAttribute ExamGridDto examGridDto){ List<ExamGridDto> examGridDtos;
+	 * examGridDtos=examGridService.list(examGridDto);
+	 * model.addAttribute("exam",examGridDtos); return "examgrid/list"; }
+	 */
 
     @PostMapping("/list.do")
     public String listPost(Model model,
@@ -66,6 +81,14 @@ public class ExamController {
         return list;
     }
 
+
+    @GetMapping("/{eId}/userListBoard.do")
+    public @ResponseBody ExamGridDto userListBoard(Model model,
+    							@PathVariable String eId,
+                               @ModelAttribute ExamGridDto examGridDto){
+       ExamGridDto examGrid =examGridService.detail(Integer.parseInt(eId));
+        return examGrid;
+    }
 
     @GetMapping("/register.do")
     public void registerForm(){

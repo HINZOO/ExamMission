@@ -2,10 +2,12 @@ package com.example.demo.service;
 
 import java.util.List;
 
+
 import com.example.demo.dto.ExamGridDto;
+import com.github.pagehelper.Page;
 
 public interface ExamGridService {
-    List<ExamGridDto> list(ExamGridDto examGridDto);
+    Page<ExamGridDto> list(ExamGridDto examGridDto);
     ExamGridDto detail(int eId);
     ExamGridDto idCheck(String uId);
     int register(ExamGridDto examGridDto);

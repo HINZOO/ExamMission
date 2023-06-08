@@ -2,24 +2,22 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ExamGridDto;
+import com.example.demo.dto.PageDto;
 import com.example.demo.mapper.ExamGridMapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
-public class ExamGridServiceImpl implements ExamGridService{
-
+public class ExamGridServiceImpl implements ExamGridService {
+	@Autowired
     private ExamGridMapper examGridMapper;
-
-    @Override
-    public List<ExamGridDto> list(ExamGridDto examGridDto) {
-        List<ExamGridDto>list = examGridMapper.findAll(examGridDto);
-        return list;
-    }
 
     @Override
     public ExamGridDto detail(int eId) {
@@ -53,6 +51,14 @@ public class ExamGridServiceImpl implements ExamGridService{
         remove=examGridMapper.deleteOne(eId);
         return remove;
     }
+
+	@Override
+	public Page<ExamGridDto> list(ExamGridDto examGridDto) {
+		Page<ExamGridDto>list = examGridMapper.findAll(examGridDto);
+		PageHelper.startPage(1,5);
+		System.out.println(list);
+		return list;
+	}
 
 
 }

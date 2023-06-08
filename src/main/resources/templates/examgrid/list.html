@@ -50,33 +50,14 @@
         top: 100%;
         margin-top: 5px;
       }
-      
-      .tableWrapper {
-      	margin:0 auto;
-    width: 800px;
-    height: 350px;
-    overflow: auto;
-}
 
-#ListTable {
 
-    width: 800px;
-    border: 0px;
-    border-collapse: collapse;
-}
-
-#ListTable th {
-    position: sticky;
-    top: 0px;
-    background-color:white;
-}
-
-    </style>
+</style>
 </head>
 <div layout:fragment="content">
     <h1>Grid 그리드</h1>
-    <p id="testText"></p>
-    <hr>
+    <p th:text="${page}"></p>
+    <div id="AllContainer" class="border border-2 p-2  mb-5" >
         <div class="container text-center">
             <form name="searchAndInsertForm" id="searchAndInsertForm">
                 <div class="row">
@@ -141,15 +122,14 @@
                         </div>
                     </div>
                 </div>
-                <hr>
-                <div id="buttons" class="text-end">
+                <hr class="mb-0">
+                <div id="buttons" class="text-end py-3">
                     <button type="submit" class="btn btn-primary" formaction="./list.do" formmethod="post" >조회</button>
                     <button type="button" class="btn btn-primary" onclick="addRow()"> 추가</button>
                     <button type="button" class="btn btn-primary" onclick="register()" id="registerBtn"> 저장</button>
                     <button type="submit" class="btn btn-primary" formaction="./excelDown.do" formmethod="get"> 엑셀다운</button>
                     <button type="button" class="btn btn-primary" onclick="deleteSelected()" >삭제</button>
                 </div>
-                <hr>
             </form>
         </div>
 
@@ -157,28 +137,28 @@
 <!--출력페이지 --------------------------------------------------------------------------->
         <div class="tableWrapper">
         <form id="hiddenForm" name="hiddenForm" >
-		    <table id="ListTable" class="table">
-		        <thead>
+		    <table id="ListTable" class="table table-bordered table-responsive text-center">
+		    <thead class="align-middle">
             <tr>
-                <th scope="col">선택</th>
-                <th scope="col">아이디</th>
-                <th scope="col">이름</th>
-                <th scope="col">성별</th>
-                <th scope="col">국가</th>
-                <th scope="col">도시</th>
+                <th scope="col" rowspan="2" id="noChk">선택</th>
+                <th scope="col" rowspan="2">아이디</th>
+                <th scope="col" rowspan="2">이름</th>
+                <th scope="col" rowspan="2">성별</th>
+                <th scope="col" colspan="2">장소</th>
             </tr>
+			<tr>                
+				<th scope="col">국가</th>
+				<th scope="col">도시</th>
+			</tr>
             </thead>
             <!--출력리스트-->
-            <div id="ajaxLoadPage"></div>
             <th:block th:include="/examgrid/listBoard.html"></th:block>
 
 		    </table>
         </form>
 		 </div>
-        <table id="printTable" class="table">
-           
-        </table>
-
+		<th:block th:include="/examgrid/pageNav.html" ></th:block>
+	</div>
 <!--수정모달창 ---------------------------------------------------------------------------->
     <div id="modifyModal" class="modal" tabindex="-1">
         <div class="modal-dialog">
@@ -186,9 +166,15 @@
                 <div class="modal-header">
                     <h5 class="modal-title">수정</h5>
                 </div>
+                
                 <div class="modal-body">
-                    <form name="modifyForm"  id="modifyForm">
+                   <form name="modifyForm"  id="modifyForm">
+                <div class="d-flex justify-content-end">
+                	<button type="button" class="text-end btn btn-outline-secondary mb-2" onclick="loadUserPageAjax(this)">link</button>
+                	</div>
+                 
                         <input type="hidden" name="eId" th:value="${eId}">
+                			
                         <div class="row">
                             <div class="col">
                                 <label class="form-control"> 아이디</label>

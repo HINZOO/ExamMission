@@ -110,8 +110,9 @@
                                         	
                             }else {
                                 $(this).val(json[key]);
+                         
                             }
-                            
+                       
                         });
                         
                 	    (function() {
@@ -434,6 +435,40 @@
                 console.log("Error:", error);
             }
         }
+    
+  
+    async function loadUserPageAjax(selectElement) {
+		let eId= selectElement.closest('form').eId.value;
+			
+        try {
+            let url = `/examgrid/${eId}/userListBoard.do`;
+            const resp = await fetch(url, { method: "GET" });
+
+            if (resp.status === 200) {
+                const data = await resp.json();
+                let ajaxTD = "";
+                let element = document.getElementById('noChk');
+                if(element.textContent==='선택'){
+				    element.textContent = 'NO.';
+				}			
+			
+            	ajaxTD += `<tr ondblclick="loadModify(${data.eId})" class="w-100 h-75 overflow-scroll" style="${data.gender === 'MALE' ? 'background:#FBFFDC' : 'background:#E6FFFD'}">`;
+                ajaxTD += "<td><class='col'>" + data.eId + "</td>";
+                ajaxTD += "<td class='col'>" + data.uId + "</td>";
+                ajaxTD += "<td class='col'>" + data.name + "</td>";
+                ajaxTD += "<td class='col'>" + data.gender + "</td>";
+                ajaxTD += "<td class='col'>" + data.nation + "</td>";
+                ajaxTD += "<td class='col'>" + data.city + "</td></tr>";
+
+                $("#loadCont").html(ajaxTD); // jQuery를 사용하여 데이터를 삽입
+            } else {
+                console.log("Error:", resp.status);
+            }
+        } catch (error) {
+            console.log("Error:", error);
+        }
+        modifyModal.hide();
+    }
         
         
 	

@@ -34,7 +34,7 @@
             AND nation=#{nation}
         </if>
         <if test="city != null and !city.isEmpty()">
-            AND city LIKE CONCAT('%',#{city},'%')
+            AND city=#{city}
         </if>
         <if test="gender != null and !gender.isEmpty()">
             AND gender=#{gender}
@@ -42,7 +42,6 @@
         <if test="toTime != null and !toTime.isEmpty()">
             AND (post_time>=#{toTime} AND #{fromTime}>=post_time)
         </if>
-        ORDER BY e_id DESC;
     </select>
     <select id="findByEId"  resultMap="ExamMap">
         SELECT * FROM exam_grid WHERE e_id=#{eId}
