@@ -1,26 +1,24 @@
 <nav aria-label="Page navigation example">
   <ul class="pagination justify-content-center">
-<!--왼쪽-->
+
     <li class="page-item">
       <a class="page-link"
-         th:href="@{''(pageNum=${page.prePage},pageSize=5)}"
+         th:href="@{''(pageNum=${page.prePage},pageSize=5,order=${param.order},direct=${param.direct})}"
          th:classappend="${page.isHasPreviousPage?'':'disabled'}"
-      ><i class="bi bi-arrow-left-short"></i></a>
+      >Prev</a>
     </li>
-<!--가운데 -->
     <li th:each="p:${page.navigatepageNums}" class="page-item">
       <a class="page-link"
          th:classappend="${p==page.pageNum?'active':''}"
-         th:href="@{''(pageNum=${p},pageSize=5,order=${param.order})}"
+         th:href="@{''(pageNum=${p},pageSize=5,order=${param.order},direct=${param.direct})}"
          th:text="${p}"
       ></a>
     </li>
-<!--오른쪽-->
     <li class="page-item">
       <a class="page-link"
-         th:href="@{''(pageNum=${page.nextPage},pageSize=5,order=${param.order})}"
+         th:href="@{''(pageNum=${page.nextPage},pageSize=5,order=${param.order},direct=${param.direct})}"
          th:classappend="${page.isHasNextPage?'':'disabled'}"
-      ><i class="bi bi-arrow-right-short"></i></a>
-    </li>
+      >Next</a>
+    </li>  
   </ul>
 </nav>

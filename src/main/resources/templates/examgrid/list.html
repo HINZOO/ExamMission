@@ -56,7 +56,6 @@
 </head>
 <div layout:fragment="content">
     <h1>Grid 그리드</h1>
-    <p th:text="${page}"></p>
     <div id="AllContainer" class="border border-2 p-2  mb-5" >
         <div class="container text-center">
             <form name="searchAndInsertForm" id="searchAndInsertForm">
@@ -71,7 +70,6 @@
                             <input type="text" class="form-control" name="name" id="name" placeholder="이름">
                         </div>
                     </div>
-                    <div class="col"></div>
                     <div class="col">
                         <div class="form-check form-check-inline">
                             <label class="form-check-label">
@@ -82,6 +80,17 @@
                             <label class="form-check-label">
                             <input class="form-check-input gender" type="radio" name="gender" onclick="searchGender(event)"value="FEMALE">
                             녀</label>
+                        </div></div>
+                    <div class="col">
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                            <input class="form-check-input lang" type="radio" name="ko" onclick="" value="" >
+                            한국어</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                            <input class="form-check-input lang" type="radio" name="en" onclick="" value="">
+                            English</label>
                         </div>
                     </div>
                 </div>
@@ -158,7 +167,8 @@
         </form>
 		 </div>
 		<th:block th:include="/examgrid/pageNav.html" ></th:block>
-	</div>
+		
+</div>
 <!--수정모달창 ---------------------------------------------------------------------------->
     <div id="modifyModal" class="modal" tabindex="-1">
         <div class="modal-dialog">
