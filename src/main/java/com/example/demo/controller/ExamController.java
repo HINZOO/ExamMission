@@ -202,7 +202,6 @@ public class ExamController {
     public @ResponseBody HandlerDto modify(
             @ModelAttribute ExamGridDto examGridDto
     ){
-        System.out.println("데이터"+examGridDto);
         HandlerDto handlerDto= new HandlerDto();
         int modify=0;
         modify=examGridService.modify(examGridDto);
@@ -214,7 +213,6 @@ public class ExamController {
     public @ResponseBody HandlerDto register(
             @ModelAttribute ExamGridDto examGridDto
     ){
-        System.out.println("추가데이터"+examGridDto);//확인
         HandlerDto handlerDto= new HandlerDto();
         int rowRegister=0;
         rowRegister+=examGridService.register(examGridDto);
@@ -225,7 +223,6 @@ public class ExamController {
     @GetMapping("/{uId}/checkId.do")
     public @ResponseBody int idCheck(@PathVariable String uId){
         ExamGridDto result=examGridService.idCheck(uId);
-        System.out.println("파라미터"+uId);
         if(result!=null) {
             return 1;
         }else{

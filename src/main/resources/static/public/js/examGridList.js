@@ -101,8 +101,6 @@
                             	//let valArr= new Array();
                             	valArr=values.split(",");
                             	for(let i=0; i<valArr.length;i++){
-                            		console.log("체크된 배열"+valArr); 
-                            		console.log("체크된 값"+$(this).val); 
                                     if ($(this).val() === valArr[i]) {
                                        $(this).prop("checked", true); // checkbox 요소 체크 속성 주기
                                     }
