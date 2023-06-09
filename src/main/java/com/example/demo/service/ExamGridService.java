@@ -4,10 +4,11 @@ import java.util.List;
 
 
 import com.example.demo.dto.ExamGridDto;
+import com.example.demo.dto.PageDto;
 import com.github.pagehelper.Page;
 
 public interface ExamGridService {
-    Page<ExamGridDto> list(ExamGridDto examGridDto);
+    List<ExamGridDto> list(PageDto pageDto);
     ExamGridDto detail(int eId);
     ExamGridDto idCheck(String uId);
     int register(ExamGridDto examGridDto);

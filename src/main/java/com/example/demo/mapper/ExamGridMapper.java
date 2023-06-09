@@ -5,11 +5,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.example.demo.dto.ExamGridDto;
-import com.github.pagehelper.Page;
+import com.example.demo.dto.PageDto;
 
 @Mapper
 public interface ExamGridMapper {
-	Page<ExamGridDto> findAll(ExamGridDto examGridDto);
+	List<ExamGridDto> findAll(PageDto pageDto);
 	ExamGridDto findByEId(int eId);
 	ExamGridDto findByUId(String uId);
 	int insertOne(ExamGridDto examGridDto);

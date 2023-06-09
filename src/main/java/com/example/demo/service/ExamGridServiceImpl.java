@@ -8,11 +8,8 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.ExamGridDto;
 import com.example.demo.dto.PageDto;
 import com.example.demo.mapper.ExamGridMapper;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 
-import lombok.AllArgsConstructor;
 
 @Service
 public class ExamGridServiceImpl implements ExamGridService {
@@ -53,11 +50,10 @@ public class ExamGridServiceImpl implements ExamGridService {
     }
 
 	@Override
-	public Page<ExamGridDto> list(ExamGridDto examGridDto) {
-		Page<ExamGridDto>list = examGridMapper.findAll(examGridDto);
-		PageHelper.startPage(1,5);
-		System.out.println(list);
-		return list;
+	public List<ExamGridDto> list (PageDto pageDto) {
+		 PageHelper.startPage(pageDto.getPageNum(), pageDto.getPageSize(),pageDto.getOrderBy());
+		 List<ExamGridDto> list=examGridMapper.findAll(pageDto);
+		 return list;
 	}
 
 

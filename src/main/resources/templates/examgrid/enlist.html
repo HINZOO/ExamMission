@@ -55,31 +55,31 @@
 </style>
 </head>
 <div layout:fragment="content">
-    <h1>Grid 그리드</h1>
+    <h1>Grid</h1>
     <div id="AllContainer" class="border border-2 p-2  mb-5" >
         <div class="container text-center">
             <form name="searchAndInsertForm" id="searchAndInsertForm">
                 <div class="row">
                     <div class="col">
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="uId" id="uId" placeholder="아이디" >
+                            <input type="text" class="form-control" name="uId" id="uId" placeholder="id" >
                         </div>
                     </div>
                     <div class="col">
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="name" id="name" placeholder="이름">
+                            <input type="text" class="form-control" name="name" id="name" placeholder="name">
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-check form-check-inline">
                             <label class="form-check-label">
                             <input class="form-check-input gender" type="radio" name="gender" onclick="searchGender(event)" value="MALE" >
-                            남</label>
+                            male</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <label class="form-check-label">
                             <input class="form-check-input gender" type="radio" name="gender" onclick="searchGender(event)"value="FEMALE">
-                            녀</label>
+                           female</label>
                         </div></div>
                     <div class="col">
                         <div class="form-check form-check-inline">
@@ -97,7 +97,7 @@
                 <div class="row">
                     <div class="col nation">
                         <select class="form-select" aria-label="nation" name="nation"  id="nation" onchange="nationAndCitySelect(this)">
-                            <option value="" selected>국가</option>
+                            <option value="" selected>Nation</option>
                             <option value="korea">korea</option>
                             <option value="america">america</option>
                             <option value="japan">japan</option>
@@ -120,24 +120,24 @@
                     <div class="col">
                         <div class="form-floating">
                             <input type="text" class="form-control" name="toTime" id="floatingFrom" value="" placeholder="일정 시작" onfocus="(this.type='date')">
-                            <label for="floatingFrom">시작일</label>
+                            <label for="floatingFrom">ToDate</label>
                         </div>
                     </div>
 
                     <div class="col">
                         <div class="form-floating">
                         <input type="text" class="form-control" name="fromTime" value="" id="floatingTo" placeholder="일정 끝" onfocus="(this.type='date')">
-                        <label  for="floatingTo">종료일</label>
+                        <label  for="floatingTo">FromDate</label>
                         </div>
                     </div>
                 </div>
                 <hr class="mb-0">
                 <div id="buttons" class="text-end py-3">
-                    <button type="submit" class="btn btn-primary" formaction="./list.do" formmethod="post" >조회</button>
-                    <button type="button" class="btn btn-primary" onclick="addRow()"> 추가</button>
-                    <button type="button" class="btn btn-primary" onclick="register()" id="registerBtn"> 저장</button>
-                    <button type="submit" class="btn btn-primary" formaction="./excelDown.do" formmethod="get"> 엑셀다운</button>
-                    <button type="button" class="btn btn-primary" onclick="deleteSelected()" >삭제</button>
+                    <button type="submit" class="btn btn-primary" formaction="./list.do" formmethod="post" >search</button>
+                    <button type="button" class="btn btn-primary" onclick="addRow()">add</button>
+                    <button type="button" class="btn btn-primary" onclick="register()" id="registerBtn">save</button>
+                    <button type="submit" class="btn btn-primary" formaction="./excelDown.do" formmethod="get">excelDown</button>
+                    <button type="button" class="btn btn-primary" onclick="deleteSelected()" >delete</button>
                 </div>
             </form>
         </div>
@@ -149,15 +149,15 @@
 		    <table id="ListTable" class="table table-bordered table-responsive text-center">
 		    <thead class="align-middle">
             <tr>
-                <th scope="col" rowspan="2" id="noChk">선택</th>
-                <th scope="col" rowspan="2">아이디</th>
-                <th scope="col" rowspan="2">이름</th>
-                <th scope="col" rowspan="2">성별</th>
-                <th scope="col" colspan="2">장소</th>
+                <th scope="col" rowspan="2" id="noChk">no.</th>
+                <th scope="col" rowspan="2">Id</th>
+                <th scope="col" rowspan="2">name</th>
+                <th scope="col" rowspan="2">gender</th>
+                <th scope="col" colspan="2">location</th>
             </tr>
 			<tr>                
-				<th scope="col">국가</th>
-				<th scope="col">도시</th>
+				<th scope="col">nation</th>
+				<th scope="col">city</th>
 			</tr>
             </thead>
             <!--출력리스트-->
@@ -174,7 +174,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">수정</h5>
+                    <h5 class="modal-title">modifyForm</h5>
                 </div>
                 
                 <div class="modal-body">
@@ -187,7 +187,7 @@
                 			
                         <div class="row">
                             <div class="col">
-                                <label class="form-control"> 아이디</label>
+                                <label class="form-control">Id</label>
                             </div>
                             <div class="input-group mb-3 col">
                                 <input type="text" class="form-control" name="uId" placeholder="아이디">
@@ -195,7 +195,7 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <label class="form-control">이름</label>
+                                <label class="form-control">name</label>
                             </div>
                             <div class="input-group mb-3 col">
                                 <input type="text" class="form-control" name="name" placeholder="이름">
@@ -203,24 +203,24 @@
                         </div>
                         <div class="row">
                             <div class="col-6 mb-3">
-                                <label class="form-control">성별</label>
+                                <label class="form-control">gender</label>
                             </div>
                             <div class="mb-3 form-check form-check col-3">
                                 <input class="form-check-input" type="radio" name="gender" id="gender3" value="MALE" >
-                                <label class="form-check-label" for="gender3">남</label>
+                                <label class="form-check-label" for="gender3">male</label>
                             </div>
                             <div class=" mb-3 form-check form-check col-3">
                                 <input class="form-check-input" type="radio" name="gender" id="gender4" value="FEMALE">
-                                <label class="form-check-label" for="gender4">녀</label>
+                                <label class="form-check-label" for="gender4">female</label>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col input-group mb-3">
-                                <label class="form-control">국가</label>
+                                <label class="form-control">nation</label>
                             </div>
                             <div class="col nation">
                                 <select class="form-select mb-3" aria-label="nation" name="nation"  onchange="nationAndCitySelect(this)">
-                                    <option value="" >국가</option>
+                                    <option value="" >nation</option>
                                     <option value="korea">korea</option>
                                     <option value="america">america</option>
                                     <option value="japan">japan</option>
@@ -229,7 +229,7 @@
                         </div>
                         <div class="row">
                          	<div class="col input-group mb-3">
-                                <label class="form-control">도시</label>
+                                <label class="form-control">city</label>
                             </div>
                  		    <div class="multipleSelection col ">
 					        <div class="selectBox" onclick="showCheckBox(this)">
@@ -245,8 +245,8 @@
 						</div>                
                         </div>
                         <div class="text-center my-3">
-                            <button type="button" class="btn btn-primary me-4" onclick="modifyAction()">저장</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-primary me-4" onclick="modifyAction()">save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
                         </div>
                     </form>
                 </div>

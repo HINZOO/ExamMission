@@ -5,111 +5,20 @@
 <head>
     <meta charset="UTF-8">
     <title>GRID</title>
-    
-       <style>  
-      .selectBox {
-        position: relative;
-      }
-      
-      .selectBox select {
-        width: 100%;
-      }
-      
-      .overSelect {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-      }
-      
-      #checkBoxes {
-        display: none;
-        border: 1px solid;
-        position: absolute;
-        z-index: 1;
-      }
-      
-      #checkBoxes label {
-        display: block;
-      }
-      
-      .content {
-        position: relative;
-      }
-      
-      .content .multipleSelection {
-        display: inline-block;
-      }
-      
-      .content .multipleSelection #checkBoxes {
-        top: 100%;
-        margin-top: 5px;
-      }
 
-    </style>
 </head>
 
 <div layout:fragment="content" >
 
- <div class="multipleSelection">
-	<div class="selectBox"     onclick="showCheckboxes()">
-    <select class="form-select">
-        <option>Select options</option>
-    </select>
-    <div class="overSelect"></div>
-    <div id="checkBoxes" class="form-control w-50">
-    <label for="first">
-        <input type="checkbox"  name="nation" id="first" value="국가1" />
-        checkBox1
-    </label>
-      
-    <label for="second">
-        <input type="checkbox" name="nation" id="second" value="국가2" />
-        checkBox2
-    </label>
-    <label for="third">
-        <input type="checkbox"  name="nation" id="third"value="국가3"  />
-        checkBox3
-    </label>
-    <label for="fourth">
-        <input type="checkbox"   name="nation" id="fourth"value="국가4"  />
-        checkBox4
-    </label>
-</div>
-</div>  
-         
-       </div>
-      <div>아래글씨22</div>
-        
+	<h1>i18n 테스트</h1>
+
+<span th:text="#{hello}"></span><br>
+<span th:text="#{welcome}"></span><br>
+<button type="button" th:text="#{switch-en}" onclick="window.location.href='http://localhost:8080/testpage/list.do?localeData=en'"></button> <!-- 3 -->
+<button type="button" th:text="#{switch-ko}" onclick="window.location.href='http://localhost:8080/testpage/list.do?localeData=ko'"></button>
 		
 <script>
-	var show = true;
-	let checkboxes =  document.getElementById("checkBoxes");
-	function showCheckboxes() {
-	    if (show) {
-	        checkboxes.style.display = "block";
-	        show = false;
-	    } else {
-	        checkboxes.style.display = "none";
-	        show = true;
-	    }  
-	}
 	
-	$(document).ready(function() {
-		  // 체크박스의 변경 이벤트를 감지
-		  $('input[name="nation"]').on('change', function() {
-		    var checkedValues = [];
-	
-		    // 체크된 체크박스들을 반복하며 값을 배열에 추가
-		    $('input[name="nation"]:checked').each(function() {
-		      checkedValues.push($(this).val());
-		    });
-	
-		    // 배열에 있는 값들을 출력
-		    console.log(checkedValues);
-		  });
-	});
 </script>
 </div>
 </html>

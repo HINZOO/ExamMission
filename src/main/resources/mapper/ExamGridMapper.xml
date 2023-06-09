@@ -12,6 +12,8 @@
         <result column="toTime" property="toTime"/>
         <result column="fromTime" property="fromTime"/>
     </resultMap>
+    
+    
     <insert id="insertOne" useGeneratedKeys="true" keyProperty="eId" parameterType="ExamGridDto">
         INSERT INTO exam_grid (u_id,name, nation, city, gender)VALUES(#{uId},#{name},#{nation},#{city},#{gender})
     </insert>
@@ -21,7 +23,7 @@
     <delete id="deleteOne">
         DELETE FROM exam_grid WHERE e_id=#{eId}
     </delete>
-    <select id="findAll" resultMap="ExamMap">
+    <select id="findAll" resultMap="ExamMap" parameterType="PageDto">
         SELECT * FROM exam_grid
         WHERE 1=1
         <if test="name != null and !name.isEmpty()">

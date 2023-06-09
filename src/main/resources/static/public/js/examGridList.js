@@ -493,7 +493,24 @@
 	    	}
 	    	 
    	}
-		
+   	
+   	
+ //다국어지원  	
+function langChange(event){
+	   loadLangPage(event.target.value);
+	   console.log(event.target.value);
+	}
+	
+function loadLangPage(val) {
+		if(val==="ko"){
+			window.location.href=`http://localhost:8080/examgrid/list.do?`
+		}
+		if(val==="en"){
+			window.location.href=`http://localhost:8080/examgrid/list_en.do?`
+		}
+	  
+	}
+			
 
      
 
